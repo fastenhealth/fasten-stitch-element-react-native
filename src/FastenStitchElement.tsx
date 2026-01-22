@@ -76,7 +76,7 @@ const FastenStitchElement = ({
     setModalUrl('');
   }, []);
 
-  const interceptWindowOpen = useCallback(({ nativeEvent }: WebViewNavigation) => {
+  const interceptWindowOpen = useCallback(({ nativeEvent }: any) => {
     const { targetUrl } = nativeEvent;
     if (!targetUrl) {
       console.warn('[FastenStitchElement] window.open intercepted without a targetUrl');
@@ -133,7 +133,7 @@ const FastenStitchElement = ({
   );
 
   const handleModalLoadEnd = useCallback(
-    (navState: WebViewNavigation) => {
+    (navState: any) => {
       const callbackUrl = navState.nativeEvent.url;
       //bridge/callback is the final url served by Fasten Connect API in production. It will contain a window.close() call to close the modal.
       //bridge/identity_verification/callback is the final url used for TEFCA mode identity verification flow

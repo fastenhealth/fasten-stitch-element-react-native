@@ -1,2 +1,2 @@
-export { default as FastenConnect } from './FastenStitchElement.tsx';
-export type { FastenStitchElementOptions } from './FastenStitchElement.tsx';
+export { default as FastenStitchElement } from './FastenStitchElement';
+export type { FastenStitchElementOptions } from './FastenStitchElement';

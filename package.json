@@ -1,5 +1,5 @@
 {
-  "name": "fasten-connect-stitch-react-native",
+  "name": "@fastenhealth/fasten-stitch-element-react-native",
   "version": "1.0.0",
   "main": "dist/index.js",
   "module": "dist/index.js",

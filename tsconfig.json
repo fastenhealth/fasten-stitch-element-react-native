@@ -5,9 +5,11 @@
     "declaration": true,
     "emitDeclarationOnly": false,
     "allowJs": false,
+    "noEmit": false,
+    "allowImportingTsExtensions": false,
     "jsx": "react-native",
     "module": "esnext",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "strict": false
