@@ -1,3 +1,9 @@
+<p align="center">
+  <a href="https://github.com/fastenhealth/">
+  <img width="400" alt="fasten_view" src="https://github.com/fastenhealth/brand-kit/raw/main/connect/banner-transparent.png">
+  </a>
+</p>
+
 # Fasten Connect React Native SDK (Beta)
 
 A lightweight React Native SDK that embeds the Fasten Connect experience inside any React Native application. The
