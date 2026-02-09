@@ -2,7 +2,7 @@ import React, { useCallback, useState } from 'react';
 import { Button, Modal, StyleSheet, View } from 'react-native';
 import base64 from 'react-native-base64';
 import { WebView } from 'react-native-webview';
-import type { WebViewMessageEvent, WebViewNavigation } from 'react-native-webview/lib/WebViewTypes';
+import type { WebViewMessageEvent } from 'react-native-webview/lib/WebViewTypes';
 
 /* *
 * This component is intended to replace the Fasten Connect Stitch.js widget in a React Native app.
@@ -51,6 +51,7 @@ export interface FastenStitchElementOptions {
   tefcaCspPromptForce?: boolean;
   eventTypes?: string;
   onEventBus?: (data: unknown) => void;
+  renderCloseButton?: (onClose: () => void) => React.ReactNode;
 }
 
 type FastenStitchElementQueryParams = Omit<FastenStitchElementOptions, 'onEventBus' | 'debugModeEnabled'>;
@@ -64,8 +65,8 @@ interface FastenStitchElementMessage {
 const FastenStitchElement = ({
   onEventBus,
   debugModeEnabled,
+  renderCloseButton,
   ...queryParams
-
 }: FastenStitchElementOptions) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [modalUrl, setModalUrl] = useState('');
@@ -182,7 +183,7 @@ const FastenStitchElement = ({
               console.error('[FastenStitchElement ModalWebView] error', nativeEvent);
             }}
           />
-          <Button title="Close" onPress={dismissModal} />
+          {renderCloseButton ? renderCloseButton(dismissModal) : <Button title="Close" onPress={dismissModal} />}
         </View>
       </Modal>
     </View>
