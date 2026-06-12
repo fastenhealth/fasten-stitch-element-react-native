@@ -159,7 +159,6 @@ const FastenStitchElement = ({
         javaScriptEnabled
         domStorageEnabled
         mixedContentMode="always"
-        originWhitelist={['*']}
         webviewDebuggingEnabled={debugModeEnabled}
         onOpenWindow={interceptWindowOpen}
         onMessage={createMessageHandler(CommunicationEntityPrimaryWebView)}
@@ -174,7 +173,6 @@ const FastenStitchElement = ({
             source={{ uri: modalUrl }}
             javaScriptEnabled
             domStorageEnabled
-            originWhitelist={['*']}
             mixedContentMode="always"
             webviewDebuggingEnabled={debugModeEnabled}
             onLoadEnd={handleModalLoadEnd}
