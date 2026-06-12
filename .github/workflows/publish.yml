@@ -36,6 +36,11 @@ jobs:
           node-version: 20
           registry-url: https://registry.npmjs.org
 
+      - name: Configure git user
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
       - name: Install dependencies
         run: yarn install
 
