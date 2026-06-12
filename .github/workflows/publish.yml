@@ -1,21 +1,31 @@
 name: Publish package
 
 on:
-  push:
-    tags:
-      - 'v*'
+#  push:
+#    tags:
+#      - 'v*'
   workflow_dispatch:
+    inputs:
+      bump:
+        description: "Version bump type"
+        required: true
+        default: patch
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
 
 permissions:
   id-token: write # Required for OIDC authentication
-  contents: read # Allows the workflow to read repository contents
-
+  contents: write # Allows the workflow to read repository contents
+concurrency:
+  group: npm-release
+  cancel-in-progress: false
 
 jobs:
   build-and-publish:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -29,8 +39,27 @@ jobs:
       - name: Install dependencies
         run: yarn install
 
+      - name: Bump version (commit + tag)
+        id: bump
+        run: |
+          npm version "${{ inputs.bump }}" -m "chore(release): %s [skip ci]"
+          echo "version=$(node -p "require('./package.json').version")" >> "$GITHUB_OUTPUT"
+          echo "tag=v$(node -p "require('./package.json').version")" >> "$GITHUB_OUTPUT"
+
       - name: Build package
         run: npm run build
 
+      - name: Push commit and tag
+        run: |
+          git push origin HEAD
+          git push origin --tags
+
       - name: Publish to npm
         run: npm publish --access public
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.bump.outputs.tag }}
+          name: ${{ steps.bump.outputs.tag }}
+          generate_release_notes: true
