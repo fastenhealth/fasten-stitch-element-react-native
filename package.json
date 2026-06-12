@@ -33,5 +33,12 @@
     "react-native-webview": "13.13.5",
     "typescript": "^5.9.3"
   },
-  "private": false
+  "private": false,
+  "publishConfig": {
+    "provenance": true
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fastenhealth/fasten-stitch-element-react-native.git"
+  }
 }
