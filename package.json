@@ -35,8 +35,11 @@
   },
   "private": false,
   "publishConfig": {
-    "provenance": true
+    "provenance": true,
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
   },
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/fastenhealth/fasten-stitch-element-react-native.git"
