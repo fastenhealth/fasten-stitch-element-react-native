@@ -37,6 +37,7 @@ const CUSTOMER_PUBLIC_ID = 'public_test_...';
 export const ConnectScreen = () => (
   <FastenStitchElement
     publicId={CUSTOMER_PUBLIC_ID}
+    email="person@example.com"
     debugModeEnabled
     onEventBus={(event) => {
       console.log('Fasten event', event);
@@ -54,6 +55,7 @@ The component accepts the following options (matching the Stitch.js widget confi
 
 - `publicId` (**required**) – Your Fasten Connect public identifier.
 - `externalId` – Identifier you want to associate with the patient/session.
+- `email` – Email address used to prepopulate supported Fasten Connect forms.
 - `reconnectOrgConnectionId` – Reconnect a previously established patient connection.
 - `searchOnly`, `searchQuery`, `searchSortBy`, `searchSortByOpts`, `showSplash` – Configure the provider search
   experience.

@@ -37,6 +37,7 @@ export interface FastenStitchElementOptions {
   publicId: string;
   debugModeEnabled?: boolean;
   externalId?: string;
+  email?: string;
   staticBackdrop?: boolean;
   reconnectOrgConnectionId?: string;
   brandId?: string;
@@ -194,6 +195,9 @@ function encodeOptionsAsQueryStringParameters(sdkOptions: FastenStitchElementQue
 
   if (sdkOptions.externalId) {
     params.append('external-id', sdkOptions.externalId);
+  }
+  if (sdkOptions.email) {
+    params.append('email', sdkOptions.email);
   }
   if (sdkOptions.reconnectOrgConnectionId) {
     params.append('reconnect-org-connection-id', sdkOptions.reconnectOrgConnectionId);
