@@ -4,14 +4,11 @@
   </a>
 </p>
 
-# Fasten Connect React Native SDK (Beta)
+# Fasten Connect React Native SDK 
 
 A lightweight React Native SDK that embeds the Fasten Connect experience inside any React Native application. The
 package wraps the Stitch.js workflow in a pair of coordinated `WebView`s so you can authenticate with provider portals
 and receive connection events without leaving your native app.
-
-> **Status:** Beta – APIs may change and you should validate the integration in your environment before shipping to
-> production.
 
 ## Installation
 
