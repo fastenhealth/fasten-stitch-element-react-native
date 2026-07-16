@@ -53,6 +53,7 @@ export interface FastenStitchElementOptions {
   eventTypes?: string;
   onEventBus?: (data: unknown) => void;
   renderCloseButton?: (onClose: () => void) => React.ReactNode;
+  embedBaseUrl?: string;
 }
 
 type FastenStitchElementQueryParams = Omit<FastenStitchElementOptions, 'onEventBus' | 'debugModeEnabled'>;
@@ -67,6 +68,7 @@ const FastenStitchElement = ({
   onEventBus,
   debugModeEnabled,
   renderCloseButton,
+  embedBaseUrl = 'https://embed.connect.fastenhealth.com/',
   ...queryParams
 }: FastenStitchElementOptions) => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -155,7 +157,7 @@ const FastenStitchElement = ({
     <View style={styles.root}>
       <WebView
         source={{
-          uri: `https://embed.connect.fastenhealth.com/?${queryString}`,
+          uri: `${embedBaseUrl}?${queryString}`,
         }}
         javaScriptEnabled
         domStorageEnabled
