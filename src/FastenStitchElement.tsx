@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { Button, Modal, StyleSheet, View } from 'react-native';
+import { Button, KeyboardAvoidingView, Modal, Platform, StyleSheet, View } from 'react-native';
 import base64 from 'react-native-base64';
 import { WebView } from 'react-native-webview';
 import type { WebViewMessageEvent } from 'react-native-webview/lib/WebViewTypes';
@@ -33,6 +33,85 @@ const CommunicationEntityExternal = 'FASTEN_CONNECT_EXTERNAL';
 
 const CommunicationActionModalWebviewCloseRequest = 'FASTEN_CONNECT_MODAL_WEBVIEW_CLOSE_REQUEST';
 
+// A native keyboard-aware view cannot determine which element is focused inside a WebView. This handler runs in the
+// page so the focused element is repositioned after the WebView's visible viewport changes.
+const keepFocusedElementVisible = `
+  (function () {
+    if (window.__fastenKeepFocusedElementVisibleInstalled) {
+      return;
+    }
+    window.__fastenKeepFocusedElementVisibleInstalled = true;
+
+    var scheduledScroll;
+    var nonTextInputTypes = {
+      button: true,
+      checkbox: true,
+      color: true,
+      file: true,
+      hidden: true,
+      image: true,
+      radio: true,
+      range: true,
+      reset: true,
+      submit: true
+    };
+
+    function isEditableElement(element) {
+      if (!element || !element.tagName) {
+        return false;
+      }
+
+      var tagName = element.tagName.toLowerCase();
+      if (tagName === 'textarea' || tagName === 'select' || element.isContentEditable) {
+        return true;
+      }
+
+      return tagName === 'input' && !nonTextInputTypes[(element.type || 'text').toLowerCase()];
+    }
+
+    function scrollElementIntoView(element) {
+      if (!isEditableElement(element)) {
+        return;
+      }
+
+      var viewport = window.visualViewport;
+      var viewportTop = viewport ? viewport.offsetTop : 0;
+      var viewportHeight = viewport ? viewport.height : window.innerHeight;
+      var viewportBottom = viewportTop + viewportHeight;
+      var elementBounds = element.getBoundingClientRect();
+      var margin = 16;
+
+      if (elementBounds.top < viewportTop + margin || elementBounds.bottom > viewportBottom - margin) {
+        try {
+          element.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'nearest' });
+        } catch (_error) {
+          element.scrollIntoView(false);
+        }
+      }
+    }
+
+    function scheduleScroll(element, delay) {
+      window.clearTimeout(scheduledScroll);
+      scheduledScroll = window.setTimeout(function () {
+        scrollElementIntoView(element);
+      }, delay);
+    }
+
+    document.addEventListener('focusin', function (event) {
+      if (isEditableElement(event.target)) {
+        scheduleScroll(event.target, 300);
+      }
+    }, true);
+
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', function () {
+        scheduleScroll(document.activeElement, 50);
+      });
+    }
+  })();
+  true;
+`;
+
 export interface FastenStitchElementOptions {
   publicId: string;
   debugModeEnabled?: boolean;
@@ -54,6 +133,7 @@ export interface FastenStitchElementOptions {
   onEventBus?: (data: unknown) => void;
   renderCloseButton?: (onClose: () => void) => React.ReactNode;
   embedBaseUrl?: string;
+  keyboardVerticalOffset?: number;
 }
 
 type FastenStitchElementQueryParams = Omit<FastenStitchElementOptions, 'onEventBus' | 'debugModeEnabled'>;
@@ -69,6 +149,7 @@ const FastenStitchElement = ({
   debugModeEnabled,
   renderCloseButton,
   embedBaseUrl = 'https://embed.connect.fastenhealth.com/',
+  keyboardVerticalOffset = 0,
   ...queryParams
 }: FastenStitchElementOptions) => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -155,29 +236,43 @@ const FastenStitchElement = ({
 
   return (
     <View style={styles.root}>
-      <WebView
-        source={{
-          uri: `${embedBaseUrl}?${queryString}`,
-        }}
-        javaScriptEnabled
-        domStorageEnabled
-        mixedContentMode="always"
-        webviewDebuggingEnabled={debugModeEnabled}
-        onOpenWindow={interceptWindowOpen}
-        onMessage={createMessageHandler(CommunicationEntityPrimaryWebView)}
-        onError={({ nativeEvent }) => {
-          console.error('[FastenStitchElement PrimaryWebView] error', nativeEvent);
-        }}
-      />
+      <KeyboardAvoidingView
+        style={styles.root}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={keyboardVerticalOffset}
+      >
+        <WebView
+          source={{
+            uri: `${embedBaseUrl}?${queryString}`,
+          }}
+          javaScriptEnabled
+          domStorageEnabled
+          mixedContentMode="always"
+          webviewDebuggingEnabled={debugModeEnabled}
+          injectedJavaScript={keepFocusedElementVisible}
+          injectedJavaScriptForMainFrameOnly={false}
+          onOpenWindow={interceptWindowOpen}
+          onMessage={createMessageHandler(CommunicationEntityPrimaryWebView)}
+          onError={({ nativeEvent }) => {
+            console.error('[FastenStitchElement PrimaryWebView] error', nativeEvent);
+          }}
+        />
+      </KeyboardAvoidingView>
 
       <Modal visible={modalVisible} onRequestClose={dismissModal} animationType="slide">
-        <View style={styles.modalContainer}>
+        <KeyboardAvoidingView
+          style={styles.modalContainer}
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          keyboardVerticalOffset={keyboardVerticalOffset}
+        >
           <WebView
             source={{ uri: modalUrl }}
             javaScriptEnabled
             domStorageEnabled
             mixedContentMode="always"
             webviewDebuggingEnabled={debugModeEnabled}
+            injectedJavaScript={keepFocusedElementVisible}
+            injectedJavaScriptForMainFrameOnly={false}
             onLoadEnd={handleModalLoadEnd}
             onMessage={createMessageHandler(CommunicationEntityPrimaryWebView)}
             onError={({ nativeEvent }) => {
@@ -185,7 +280,7 @@ const FastenStitchElement = ({
             }}
           />
           {renderCloseButton ? renderCloseButton(dismissModal) : <Button title="Close" onPress={dismissModal} />}
-        </View>
+        </KeyboardAvoidingView>
       </Modal>
     </View>
   );
