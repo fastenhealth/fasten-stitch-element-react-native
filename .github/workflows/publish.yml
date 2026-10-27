@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
     inputs:
       bump:
-        description: "Version bump type"
+        description: "Version bump type (ignored when an exact version is provided)"
         required: true
         default: patch
         type: choice
@@ -15,6 +15,10 @@ on:
           - patch
           - minor
           - major
+      version:
+        description: "Exact version without build metadata (e.g. 1.2.3 or 1.2.3-beta.1)"
+        required: false
+        type: string
 
 permissions:
   id-token: write # Required for OIDC authentication
@@ -50,8 +54,22 @@ jobs:
 
       - name: Bump version (commit + tag)
         id: bump
+        env:
+          BUMP_TYPE: ${{ inputs.bump }}
+          EXACT_VERSION: ${{ inputs.version }}
         run: |
-          npm version "${{ inputs.bump }}" -m "chore(release): %s [skip ci]"
+          version="$BUMP_TYPE"
+          if [[ -n "$EXACT_VERSION" ]]; then
+            numeric='(0|[1-9][0-9]*)'
+            prerelease_identifier="($numeric|[0-9]*[A-Za-z-][0-9A-Za-z-]*)"
+            semver="^$numeric\.$numeric\.$numeric(-$prerelease_identifier(\.$prerelease_identifier)*)?$"
+            if [[ ! "$EXACT_VERSION" =~ $semver ]]; then
+              echo "::error::Exact version must be a semantic version without build metadata, such as 1.2.3 or 1.2.3-beta.1"
+              exit 1
+            fi
+            version="$EXACT_VERSION"
+          fi
+          npm version "$version" -m "chore(release): %s [skip ci]"
           echo "version=$(node -p "require('./package.json').version")" >> "$GITHUB_OUTPUT"
           echo "tag=v$(node -p "require('./package.json').version")" >> "$GITHUB_OUTPUT"
 

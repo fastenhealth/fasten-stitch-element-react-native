@@ -35,6 +35,10 @@ export const ConnectScreen = () => (
   <FastenStitchElement
     publicId={CUSTOMER_PUBLIC_ID}
     email="person@example.com"
+    brandingTheme="dark"
+    brandingAccentColor="#E04E3C"
+    brandingCompanyName="your brand"
+    brandingLogoUrl="https://your-brand.com/assets/logo.svg"
     debugModeEnabled
     onEventBus={(event) => {
       console.log('Fasten event', event);
@@ -57,6 +61,9 @@ The component accepts the following options (matching the Stitch.js widget confi
 - `searchOnly`, `searchQuery`, `searchSortBy`, `searchSortByOpts`, `showSplash` – Configure the provider search
   experience.
 - `brandId`, `portalId`, `endpointId` – Restrict the experience to a specific brand/portal/endpoint.
+- `brandingTheme`, `brandingAccentColor`, `brandingCompanyName`, `brandingLogoUrl` – Customize the embedded
+  experience. These optional strings map to the `branding-theme`, `branding-accent-color`, `branding-company-name`,
+  and `branding-logo-url` query parameters, respectively.
 - `tefcaMode` -  Enable TEFCA flows
 - `eventTypes` – Comma-delimited list of event types to receive.
 - `debugModeEnabled` – Surfaces debugging tools in the embedded web views.
