@@ -228,16 +228,16 @@ function encodeOptionsAsQueryStringParameters(sdkOptions: FastenStitchElementQue
     params.append('brand-id', sdkOptions.brandId);
   }
   if (sdkOptions.brandingTheme) {
-    params.append('branding-theme', sdkOptions.brandingTheme);
+    params.append('theme', sdkOptions.brandingTheme);
   }
   if (sdkOptions.brandingAccentColor) {
-    params.append('branding-accent-color', sdkOptions.brandingAccentColor);
+    params.append('accent-color', sdkOptions.brandingAccentColor);
   }
   if (sdkOptions.brandingCompanyName) {
-    params.append('branding-company-name', sdkOptions.brandingCompanyName);
+    params.append('company-name', sdkOptions.brandingCompanyName);
   }
   if (sdkOptions.brandingLogoUrl) {
-    params.append('branding-logo-url', sdkOptions.brandingLogoUrl);
+    params.append('logo-url', sdkOptions.brandingLogoUrl);
   }
   if (sdkOptions.portalId) {
     params.append('portal-id', sdkOptions.portalId);
