@@ -41,6 +41,10 @@ export interface FastenStitchElementOptions {
   staticBackdrop?: boolean;
   reconnectOrgConnectionId?: string;
   brandId?: string;
+  brandingTheme?: string;
+  brandingAccentColor?: string;
+  brandingCompanyName?: string;
+  brandingLogoUrl?: string;
   portalId?: string;
   endpointId?: string;
   searchQuery?: string;
@@ -222,6 +226,18 @@ function encodeOptionsAsQueryStringParameters(sdkOptions: FastenStitchElementQue
 
   if (sdkOptions.brandId) {
     params.append('brand-id', sdkOptions.brandId);
+  }
+  if (sdkOptions.brandingTheme) {
+    params.append('branding-theme', sdkOptions.brandingTheme);
+  }
+  if (sdkOptions.brandingAccentColor) {
+    params.append('branding-accent-color', sdkOptions.brandingAccentColor);
+  }
+  if (sdkOptions.brandingCompanyName) {
+    params.append('branding-company-name', sdkOptions.brandingCompanyName);
+  }
+  if (sdkOptions.brandingLogoUrl) {
+    params.append('branding-logo-url', sdkOptions.brandingLogoUrl);
   }
   if (sdkOptions.portalId) {
     params.append('portal-id', sdkOptions.portalId);
